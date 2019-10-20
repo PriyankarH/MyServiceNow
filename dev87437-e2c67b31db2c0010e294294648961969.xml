@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><unload unload_date="2019-10-20 08:01:18"><sys_remote_update_set action="INSERT_OR_UPDATE"><application display_value="Global">global</application><application_name>Global</application_name><application_scope>global</application_scope><application_version/><collisions/><commit_date/><deleted/><description/><inserted/><name>Snow GitLab Integration - Priyankar V1</name><origin_sys_id/><parent/><release_date/><remote_base_update_set/><remote_parent_id/><remote_sys_id>e2c67b31db2c0010e294294648961969</remote_sys_id><state>loaded</state><summary/><sys_class_name>sys_remote_update_set</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2019-10-20 08:01:18</sys_created_on><sys_id>b6e35d22db200010e2942946489619ec</sys_id><sys_mod_count>0</sys_mod_count><sys_updated_by>admin</sys_updated_by><sys_updated_on>2019-10-20 08:01:18</sys_updated_on><update_set/><update_source/><updated/></sys_remote_update_set><sys_update_xml action="INSERT_OR_UPDATE"><action>INSERT_OR_UPDATE</action><application display_value="Global">global</application><category>customer</category><comments/><name>sys_ui_action_b36719ecdb680010e294294648961993</name><payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update sys_domain="global" table="sys_ui_action"&gt;&lt;sys_ui_action action="INSERT_OR_UPDATE"&gt;&lt;action_name&gt;commit_gitlabce&lt;/action_name&gt;&lt;active&gt;true&lt;/active&gt;&lt;client&gt;false&lt;/client&gt;&lt;client_script_v2&gt;&lt;![CDATA[function onClick(g_form) {
+
+}]]&gt;&lt;/client_script_v2&gt;&lt;comments/&gt;&lt;condition&gt;current.state=='complete'&lt;/condition&gt;&lt;form_action&gt;true&lt;/form_action&gt;&lt;form_button&gt;false&lt;/form_button&gt;&lt;form_button_v2&gt;false&lt;/form_button_v2&gt;&lt;form_context_menu&gt;false&lt;/form_context_menu&gt;&lt;form_link&gt;true&lt;/form_link&gt;&lt;form_menu_button_v2&gt;false&lt;/form_menu_button_v2&gt;&lt;form_style/&gt;&lt;hint/&gt;&lt;isolate_script&gt;false&lt;/isolate_script&gt;&lt;list_action&gt;false&lt;/list_action&gt;&lt;list_banner_button&gt;false&lt;/list_banner_button&gt;&lt;list_button&gt;false&lt;/list_button&gt;&lt;list_choice&gt;false&lt;/list_choice&gt;&lt;list_context_menu&gt;false&lt;/list_context_menu&gt;&lt;list_link&gt;false&lt;/list_link&gt;&lt;list_save_with_form_button&gt;false&lt;/list_save_with_form_button&gt;&lt;list_style/&gt;&lt;name&gt;Commit to GitLab&lt;/name&gt;&lt;onclick/&gt;&lt;order&gt;100&lt;/order&gt;&lt;script&gt;&lt;![CDATA[var content = '{"source":"https://'+gs.getProperty('instance_name')+'.service-now.com"';
+var lusGR = new GlideRecord('sys_update_set'); //local update set
+lusGR.get(current.sys_id);
+var rusObj = {};
+rusObj.remote_sys_id = lusGR.sys_id.toString();
+rusObj.state = 'loaded';
+rusObj.description = lusGR.description.toString();
+rusObj.name = lusGR.name.toString();
+rusObj.release_date = lusGR.release_date.toString();
+rusObj.application = lusGR.application.toString();
+var scopeGr = new GlideRecord('sys_scope');
+scopeGr.get(lusGR.application);
+if (scopeGr.isValid()) {
+	rusObj.application_name = scopeGr.name.toString();
+	rusObj.application_scope = scopeGr.scope.toString();
+	rusObj.application_version = scopeGr.version.toString();
+}
+content += ',"sys_remote_update_set":'+JSON.stringify(rusObj);
+var cuArr = [];
+var cuGR = new GlideRecord('sys_update_xml');
+cuGR.addQuery('update_set',lusGR.sys_id);
+cuGR.query();
+while(cuGR.next()) {
+	var cuObj = {};
+	for(var col in cuGR) {
+		if(!{}.hasOwnProperty.call(cuObj, col) &amp;&amp; col!='sys_meta') {
+			cuObj[col] = cuGR[col].toString();
+		}
+	}
+	cuObj.update_set = '';
+	cuArr.push(JSON.stringify(cuObj));
+}
+content += ', "sys_update_xml":['+cuArr.toString()+']}';
+var restMessage = new sn_ws.RESTMessageV2();
+restMessage.setRequestHeader('Content-Type','application/json');
+restMessage.setRequestHeader('Private-Token',gs.getProperty('com.gitlabce.access.token'));
+restMessage.setHttpMethod("post");
+restMessage.setEndpoint(gs.getProperty('com.gitlabce.base.url')+'/api/v4/projects/'+encodeURIComponent(gs.getProperty('com.gitlabce.project'))+'/repository/files/'+encodeURIComponent(gs.getProperty('com.gitlabce.file.path'))+encodeURIComponent(lusGR.name)+'.json');
+//var util = new GlideStringUtil();
+//var encodedContents = util.base64Encode(content);
+var reqBody = {};
+reqBody.branch = 'master';
+reqBody.author_email = 'devops.admin@vodafone.com';
+reqBody.author_name = 'DevOps Admin';
+reqBody.content = content;
+reqBody.commit_message = 'Update set in json format from SNow: '+gs.getProperty('instance_name');
+gs.log(JSON.stringify(reqBody),'gitlabce.request.'+lusGR.sys_id);
+//gs.log('test12','test12345');
+restMessage.setRequestBody(JSON.stringify(reqBody));
+//gs.log('test13','test12345');
+var response = restMessage.execute();
+//gs.log('test14','test12345');
+var body = response.getBody();
+var parser = new JSON();
+var bodyObj = parser.decode(body);
+gs.addInfoMessage(JSON.stringify(bodyObj)/*,'gitlabce.response'*/);
+action.setRedirectURL(current);]]&gt;&lt;/script&gt;&lt;show_insert&gt;false&lt;/show_insert&gt;&lt;show_multiple_update&gt;false&lt;/show_multiple_update&gt;&lt;show_query&gt;false&lt;/show_query&gt;&lt;show_update&gt;true&lt;/show_update&gt;&lt;sys_class_name&gt;sys_ui_action&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2019-10-14 03:30:44&lt;/sys_created_on&gt;&lt;sys_domain&gt;global&lt;/sys_domain&gt;&lt;sys_domain_path&gt;/&lt;/sys_domain_path&gt;&lt;sys_id&gt;b36719ecdb680010e294294648961993&lt;/sys_id&gt;&lt;sys_mod_count&gt;19&lt;/sys_mod_count&gt;&lt;sys_name&gt;Commit to GitLab&lt;/sys_name&gt;&lt;sys_overrides/&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_action_b36719ecdb680010e294294648961993&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;subhadip.bagchi@vodafone.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2019-10-18 11:58:40&lt;/sys_updated_on&gt;&lt;table&gt;sys_update_set&lt;/table&gt;&lt;ui11_compatible&gt;true&lt;/ui11_compatible&gt;&lt;ui16_compatible&gt;false&lt;/ui16_compatible&gt;&lt;/sys_ui_action&gt;&lt;/record_update&gt;</payload><payload_hash>1668151657</payload_hash><remote_update_set display_value="Snow GitLab Integration - Priyankar V1">b6e35d22db200010e2942946489619ec</remote_update_set><replace_on_upgrade>false</replace_on_upgrade><sys_created_by>admin</sys_created_by><sys_created_on>2019-10-20 08:01:18</sys_created_on><sys_id>3ee35d22db200010e2942946489619ec</sys_id><sys_mod_count>0</sys_mod_count><sys_recorded_at>16ddebbeb710000001</sys_recorded_at><sys_updated_by>admin</sys_updated_by><sys_updated_on>2019-10-20 08:01:18</sys_updated_on><table>sys_update_set</table><target_name>Commit to GitLab</target_name><type>UI Action</type><update_domain>global</update_domain><update_guid>9417f731782c00107e6977371ea13c9c</update_guid><update_guid_history>9417f731782c00107e6977371ea13c9c:1668151657,8b263331332c0010653500f63acd345a:1603602313,fefa1ffda7a8001017e22752e3bd2fc5:-1491397335,998a57fd03a80010fd4e2943967be0f9:-741756052,a93a1ff5bda80010c84e0e6ea553794e:1417937727,42ca8ff18ba80010756cdc7cba4e1f7e:-1491397335,6e7a0bf169a8001002657f25bcf6b521:1145400153,9584abed7a60001077f1da2f08a3c90c:-1491397335,e524e7ed6d6000105e247dd5d625aa0c:958605291,58e143a9c0200010ca10b1ae160905a1:878456042,340043a924200010e9bfb09be6aa649d:-666005150,9cff72a9f82000104e0e5efe3132e997:439218827,901f78019ba400109b6356e0f3998b38:-666005150,6733a5a4c5a80010cfeb51a91009816f:1110259808,c4c0696026a80010175b4b0534e13970:-1690086710,78a02d641fa80010296ceea270836f60:628551296,2aefd5644fa80010fe54442d5e55dd3d:-1662577374,d47f5d60a8a800107323b52396ca8a15:-1869109440,943dd52028a80010d51abe05e2ef4acc:-380282594,387cd52030a800101e47ffd19b24a7bf:2071948360</update_guid_history><update_set/><view/></sys_update_xml></unload>
